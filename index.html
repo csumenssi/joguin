@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>mapinha do meu coração 🖤</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+body{
+    margin:0;
+    background:black;
+    color:white;
+    overflow:hidden;
+    text-align:center;
+    font-family:'Cormorant Garamond', serif;
+}
+
+.screen{display:none;}
+.active{display:block;}
+
+/* ================= LAB ================= */
+.lab-bg{
+    width:100vw;
+    height:100vh;
+    position:relative;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+}
+
+.lab-bg img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+/* ================= MAPA ================= */
+.map-bg{
+    width:100vw;
+    height:100vh;
+    position:relative;
+    background:black;
+    background-image: url('map.png');
+    background-size: cover;
+    background-position: center;
+}
+
+.mission{
+    position:absolute;
+    cursor:pointer;
+    font-size:22px;
+    padding:8px 14px;
+    border-radius:10px;
+    background: black;
+    color: white;
+}
+
+/* ================= JOGO 1 – PINTURA ================= */
+#decifre img{
+    width:100vw;
+    height:100vh;
+    object-fit:cover;
+}
+
+.hover-area{
+    position:absolute;
+}
+
+/* ================= JOGO 2 – ESCAVAÇÃO ================= */
+#escavacao{
+    position:relative;
+    width:100vw;
+    height:100vh;
+    background:#3b2a1a;
+}
+
+#escTitulo{
+    position:absolute;
+    top:2%;
+    width:100%;
+    font-size:26px;
+    color:white;
+    z-index:3;
+}
+
+#tesouroImg{
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%, -50%);
+    width:30%;
+    z-index:1;
+    border-radius:15px;
+}
+
+#textoTesouro{
+    position:absolute;
+    top:75%;
+    left:50%;
+    transform:translateX(-50%);
+    width:60%;
+    color:white;
+    font-size:22px;
+    text-align:center;
+    z-index:1;
+    background: rgba(0,0,0,0.7);
+    padding:20px;
+    border-radius:15px;
+    opacity:0;
+}
+
+#digCanvas{
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    z-index:2;
+}
+
+#btnVoltarMapa{
+    position:absolute;
+    bottom:20px;
+    left:20px;
+    padding:10px;
+    font-size:16px;
+    border:none;
+    border-radius:6px;
+    background:rgba(255,255,255,0.3);
+    color:white;
+    cursor:pointer;
+    z-index:4;
+    display:none;
+}
+
+/* ================= JOGO 3 – LABIRINTO ================= */
+#labirinto{
+    position:relative;
+    width:100vw;
+    height:100vh;
+    background:black;
+    overflow:hidden;
+}
+
+#labTitulo{
+    position:absolute;
+    top:2%;
+    width:100%;
+    font-size:26px;
+    color:white;
+    z-index:3;
+}
+
+.labirinto-emoji{
+    position:absolute;
+    font-size:32px;
+    z-index:4;
+}
+
+.labirinto-alvo{
+    position:absolute;
+    font-size:32px;
+    z-index:4;
+}
+
+.parede{
+    position:absolute;
+    background:rgb(78, 7, 20);
+}
+
+/* ================= FINAL ================= */
+#final{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    height:100vh;
+    background:black;
+    color:white;
+    padding:20px;
+    text-align:center;
+    font-size:22px;
+}
+
+/* ================= BICHINHOS ================= */
+.animal{
+    position:fixed;
+    animation:float 7s linear infinite;
+    pointer-events:none;
+    font-size:22px;
+}
+
+@keyframes float{
+    from{transform:translateY(100vh);opacity:1;}
+    to{transform:translateY(-10vh);opacity:0;}
+}
+</style>
+</head>
+<body>
+
+<!-- LABORATÓRIO -->
+<div id="laboratorio" class="screen active">
+    <div class="lab-bg">
+        <div style="position:absolute; top:10%; width:80%; background:rgba(0,0,0,0.7); padding:20px; border-radius:15px; font-size:22px;">
+            Você é um arqueólogo curioso e acabou de conhecer uma física maluca.<br>
+            Ela te levou para conhecer o laboratório secreto dela.<br>
+            Clique no artefato misterioso no centro da sala.
+        </div>
+        <img src="lab.png">
+        <div onclick="transportar()" style="position:absolute; left:45%; top:55%; width:20%; height:15%; cursor:pointer;"></div>
+    </div>
+</div>
+
+<!-- MAPA -->
+<div id="mapa" class="screen">
+    <div class="map-bg" id="mapArea">
+        <h1 style="position:absolute;top:10px;width:100%;">Mapa Misterioso 🌌</h1>
+    </div>
+</div>
+
+<!-- JOGO 1 – PINTURA -->
+<div id="decifre" class="screen">
+    <img src="cave.png">
+    <div class="hover-area" style="top:55%; left:40%; width:10%; height:15%;" data-msg="O que será que o jacaré ama (comer)?"></div>
+    <div class="hover-area" style="top:30%; left:75%; width:20%; height:20%;" data-msg="Quem venceria essa luta?"></div>
+    <div class="hover-area" style="top:10%; left:20%; width:10%; height:10%;" data-msg="Você achou a amorceguinha 🦇"></div>
+    <p id="msgHover" style="position:absolute; bottom:20px; width:100%; font-size:20px;"></p>
+</div>
+
+<!-- JOGO 2 – ESCAVAÇÃO -->
+<div id="escavacao" class="screen">
+    <div id="escTitulo">Escavação Arqueológica ⛏️</div>
+    <img id="tesouroImg" src="tesouro.jpeg" alt="Tesouro">
+    <div id="textoTesouro">
+        Entre tantos artefatos do passado e teorias físicas malucas sobre o futuro <br><br>
+        eu encontrei o mais valioso tesouro de todos:<br><br>
+        viver uma vida contigo e construir nosso futuro 🖤<br>
+        Te amo! Você é o amor da minha vida!
+    </div>
+    <canvas id="digCanvas"></canvas>
+    <button id="btnVoltarMapa" onclick="trocar('escavacao','mapa')">🏺Volte pro mapinha, te amoooo</button>
+</div>
+
+<!-- JOGO 3 – LABIRINTO -->
+<div id="labirinto" class="screen">
+    <div id="labTitulo">Vamos ficar juntinhos?</div>
+    <div id="player" class="labirinto-emoji" style="top:80%; left:5%;">🐊</div>
+    <div id="alvo" class="labirinto-alvo" style="top:10%; left:90%;">🦇</div>
+
+    <!-- paredes -->
+    <div class="parede" style="top:10%; left:0; width:70%; height:4%;"></div>
+    <div class="parede" style="top:30%; left:30%; width:80%; height:4%;"></div>
+    <div class="parede" style="top:60%; left:0; width:80%; height:5%;"></div>
+    <div class="parede" style="top:14%; left:0; width:5%; height:60%;"></div>
+    <div class="parede" style="top:28%; left:40%; width:5%; height:20%;"></div>
+    <div class="parede" style="top:50%; left:60%; width:5%; height:30%;"></div>
+</div>
+
+<!-- FINAL -->
+<div id="final" class="screen">
+    eu te amo tanto mas às vezes não tenho muita paciência pra terminar o que começo, mas no fim a gente ficou junto né? um dia prometo fazer melhor. vc me faz querer melhorar a cada dia e é minha motivação pra continuar vivendo. te amo de um jeito que jamais conseguirei colocar em palavras. te amo desse jeito nerd todo torto, espero que entenda, vc é meu amor pra hoje e sempre. ps.: a história do jogo ficou sem história pq é sobre isso: te amo
+</div>
+
+<script>
+let etapa = 0; // controla a ordem das missões
+
+/* ================= MAPA ================= */
+function transportar(){
+    trocar("laboratorio","mapa");
+    startAnimals();
+
+    criarMissao("Decifre a Pintura Rupestre",20,30);
+    criarMissao("Escavação Arqueológica",60,50);
+    criarMissao("Labirinto do Jacaré",40,70);
+}
+
+function criarMissao(text,left,top){
+    const m=document.createElement("div");
+    m.className="mission";
+    m.innerText=text;
+    m.style.left=left+"%";
+    m.style.top=top+"%";
+
+    // só ativa a missão correta baseada na etapa
+    m.onclick = () => {
+        if(text==="Decifre a Pintura Rupestre" && etapa===0){
+            trocar("mapa","decifre");
+            etapa++;
+        } else if(text==="Escavação Arqueológica" && etapa===1){
+            trocar("mapa","escavacao");
+            iniciarEscavacao();
+            etapa++;
+        } else if(text==="Labirinto do Jacaré" && etapa===2){
+            trocar("mapa","labirinto");
+            etapa++;
+        }
+    }
+
+    mapArea.appendChild(m);
+}
+
+function trocar(a,b){
+    document.getElementById(a).classList.remove("active");
+    document.getElementById(b).classList.add("active");
+}
+
+/* ================= JOGO 1 – HOVER ================= */
+const areas=document.querySelectorAll(".hover-area");
+const msg=document.getElementById("msgHover");
+
+areas.forEach((a,i)=>{
+    a.onmouseenter=()=>msg.innerText=a.dataset.msg;
+    a.onmouseleave=()=>msg.innerText="";
+    if(i===2) a.onclick=()=>trocar("decifre","mapa");
+});
+
+/* ================= ESCAVAÇÃO ================= */
+const canvas=document.getElementById("digCanvas");
+const ctx=canvas.getContext("2d");
+let raspando=false;
+
+function iniciarEscavacao(){
+    canvas.width=window.innerWidth;
+    canvas.height=window.innerHeight;
+    ctx.globalCompositeOperation="source-over";
+    ctx.fillStyle="#3b2a1a";
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.globalCompositeOperation="destination-out";
+    setTimeout(()=>{document.getElementById("textoTesouro").style.opacity=1;},7000);
+}
+
+canvas.onmousedown = () => raspando = true;
+canvas.onmouseup = () => raspando = false;
+canvas.onmousemove = e=>{
+    if(!raspando) return;
+    ctx.beginPath();
+    ctx.arc(e.clientX,e.clientY,35,0,Math.PI*2);
+    ctx.fill();
+    const pixels=ctx.getImageData(0,0,canvas.width,canvas.height).data;
+    let t=0;
+    for(let i=3;i<pixels.length;i+=4) if(pixels[i]===0) t++;
+    if(t/(pixels.length/4)>0.4) document.getElementById("btnVoltarMapa").style.display="block";
+};
+
+/* ================= JOGO 3 – LABIRINTO ================= */
+const player=document.getElementById("player");
+const alvo=document.getElementById("alvo");
+const paredes=document.querySelectorAll("#labirinto .parede");
+
+document.addEventListener("keydown",e=>{
+    const step=2; // movimento mais suave
+    let top=parseFloat(player.style.top);
+    let left=parseFloat(player.style.left);
+
+    if(e.key==="ArrowUp") top-=step;
+    if(e.key==="ArrowDown") top+=step;
+    if(e.key==="ArrowLeft") left-=step;
+    if(e.key==="ArrowRight") left+=step;
+
+    player.style.top=top+"%";
+    player.style.left=left+"%";
+
+    // checar colisão com paredes
+    let colidiu=false;
+    const pRect=player.getBoundingClientRect();
+    paredes.forEach(p=>{
+        const r=p.getBoundingClientRect();
+        if(!(pRect.right<r.left || pRect.left>r.right || pRect.bottom<r.top || pRect.top>r.bottom)){
+            colidiu=true;
+        }
+    });
+    if(colidiu){
+        if(e.key==="ArrowUp") top+=step;
+        if(e.key==="ArrowDown") top-=step;
+        if(e.key==="ArrowLeft") left+=step;
+        if(e.key==="ArrowRight") left-=step;
+        player.style.top=top+"%";
+        player.style.left=left+"%";
+    }
+
+    // checar se chegou no alvo
+    const aRect=alvo.getBoundingClientRect();
+    if(!(pRect.right<aRect.left || pRect.left>aRect.right || pRect.bottom<aRect.top || pRect.top>aRect.bottom)){
+        trocar("labirinto","final");
+    }
+});
+
+/* ================= BICHINHOS ================= */
+function startAnimals(){
+    setInterval(()=>{
+        const d=document.createElement("div");
+        const itens=["🦇","🐊","te amo"];
+        d.innerHTML=itens[Math.floor(Math.random()*3)];
+        d.className="animal";
+        d.style.left=Math.random()*100+"vw";
+        document.body.appendChild(d);
+        setTimeout(()=>d.remove(),7000);
+    },400);
+}
+</script>
+</body>
+</html>
